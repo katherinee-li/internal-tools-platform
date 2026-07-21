@@ -22,8 +22,6 @@ export type Permission =
   | "flag.read"
   | "flag.write"
   | "flag.write.production"
-  | "ticket.read"
-  | "ticket.write"
   | "metrics.read"
   | "audit.read";
 
@@ -102,23 +100,6 @@ export interface FeatureFlag {
   environment: Environment;
   enabled: boolean;
   rolloutPercentage: number; // 0-100
-  updatedBy?: string;
-  updatedAt?: string;
-}
-
-// ---- Support tickets (the "fourth tool" marginal-cost experiment) --------
-
-export type TicketStatus = "open" | "pending" | "resolved";
-export type TicketPriority = "low" | "medium" | "high";
-
-export interface SupportTicket {
-  id: string;
-  subject: string;
-  customerName: string;
-  priority: TicketPriority;
-  status: TicketStatus;
-  createdAt: string;
-  note?: string;
   updatedBy?: string;
   updatedAt?: string;
 }

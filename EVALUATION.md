@@ -17,7 +17,7 @@ with stated assumptions — validate before quoting).
 | Active build time | **~1h45m** of active work (excludes idle time between sessions; this is effort, not wall-clock) | [measured] |
 | Human vs Devin time | Human ~30–45m (prompts, decisions, review); the rest is Devin generating, running, and testing | [estimated] |
 | Rework | **Low** — a few review/lint fixes, no architectural rework | [measured] |
-| Code generated | **~2,500 lines** of TS/TSX, the large majority Devin-generated | [measured] |
+| Code generated | **~2,400 lines** of TS/TSX, the large majority Devin-generated | [measured] |
 | Tests | **9** automated (vitest + supertest) plus an adversarial API validation pass (RBAC, refund edge cases, flag safeguards, KYC validation, audit integrity) | [measured] |
 | Devin compute cost | **~$16** total for the whole engagement (≈ $0.006/LOC) | [measured] |
 
@@ -27,7 +27,7 @@ Reported as two numbers so it isn't cherry-picked to the easiest case:
 
 | Case | Result |
 | --- | --- |
-| **Floor** — a structurally similar CRUD tool (Support Tickets) | **~80 seconds**, ~130 LOC, **0 new primitives** — nearly free |
+| **Floor** — adding a structurally similar CRUD tool | **~80 seconds**, ~130 LOC, **0 new primitives** — nearly free |
 | **Ceiling** — a genuinely different, non-CRUD tool (Operations Analytics dashboard) | **~15 minutes**, **1 new reusable primitive** (chart/aggregation), then reusable |
 
 The honest signal is "one new primitive, then free again" — more believable than "everything takes
@@ -67,7 +67,7 @@ compute changes.
 
 | Metric | Value |
 | --- | --- |
-| Required workflows completed | **3/3** (KYC, Refunds, Feature Flags) + Support Tickets, Analytics, and an Audit viewer |
+| Required workflows completed | **3/3** (KYC, Refunds, Feature Flags) + an Operations Analytics dashboard and an Audit viewer |
 | Authorization | Enforced **server-side**; a role-flip on any write returns **403 + a `denied` audit event** (client gating is UX only) |
 | Validation | Refund settled-only / amount / over-limit / double-refund; KYC mandatory note; rollout 0–100 bounds |
 | Audit | Every mutating endpoint writes exactly one event with outcome `success` / `denied` / `error` |

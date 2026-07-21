@@ -10,7 +10,7 @@ long each step took, not clock times. It excludes idle time between sessions.
 | --- | --- | --- |
 | ~15m | 0:15 | Scaffold (npm workspaces) + shared contracts (types, RBAC, validation), Express + SQLite server with audit + RBAC middleware, and the web platform engine (tool-definition + reusable table/form/filter primitives). |
 | ~10m | 0:25 | The three core workflows — KYC Review, Refunds, Feature Flags — plus the Audit Log viewer, all on the shared engine. |
-| ~80s | 0:26 | Fourth tool (Support Tickets, CRUD) added on the existing engine — the marginal-cost experiment. |
+| ~1m | 0:26 | Marginal-cost experiment: added a structurally similar CRUD tool on the existing engine in ~80 seconds, 0 new primitives. |
 | ~15m | 0:41 | Non-CRUD **Operations Analytics** dashboard: a reusable chart/aggregation primitive + an aggregation endpoint. |
 | ~10m | 0:51 | Automated test suite (vitest + supertest) + an adversarial API validation pass. |
 | ~14m | 1:05 | Lint/typecheck/build gate, single-image Docker, and GitHub Actions CI. |
@@ -39,8 +39,9 @@ it isn't" pattern the evaluation analyzes.
 
 ## Marginal cost of a new tool
 
-- **CRUD tool (Support Tickets):** ~80 seconds, ~130 LOC, **0 new primitives** — one server route +
-  one declarative UI file, reusing the table/form/filter/RBAC/audit layers.
+- **CRUD tool:** measured by adding a structurally similar table tool — ~80 seconds, ~130 LOC,
+  **0 new primitives** — one server route + one declarative UI file, reusing the
+  table/form/filter/RBAC/audit layers.
 - **Non-CRUD tool (Analytics dashboard):** ~15 minutes, **1 new reusable primitive**
   (chart/aggregation) + ~120 LOC of config and an aggregation query, reusable thereafter.
 

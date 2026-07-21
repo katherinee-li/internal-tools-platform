@@ -18,7 +18,7 @@ beforeAll(() => {
 
 describe("RBAC read access", () => {
   it("viewer can read every tool", async () => {
-    for (const path of ["/api/kyc", "/api/refunds/transactions", "/api/flags", "/api/tickets", "/api/audit"]) {
+    for (const path of ["/api/kyc", "/api/refunds/transactions", "/api/flags", "/api/audit"]) {
       const res = await request(app).get(path).set(as("viewer"));
       expect(res.status).toBe(200);
     }

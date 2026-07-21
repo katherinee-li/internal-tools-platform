@@ -4,7 +4,6 @@ import { DashboardPage } from "../platform/DashboardPage";
 import { kycTool } from "./kyc";
 import { refundsTool } from "./refunds";
 import { flagsTool } from "./flags";
-import { ticketsTool } from "./tickets";
 import { analyticsDashboard } from "./analytics";
 import { auditTool } from "./audit";
 
@@ -22,7 +21,6 @@ export const TOOLS: RegisteredTool[] = [
   { path: "/kyc", label: "KYC Review", icon: kycTool.icon!, readPermission: kycTool.readPermission, element: <ToolPage def={kycTool} /> },
   { path: "/refunds", label: "Refunds", icon: refundsTool.icon!, readPermission: refundsTool.readPermission, element: <ToolPage def={refundsTool} /> },
   { path: "/flags", label: "Feature Flags", icon: flagsTool.icon!, readPermission: flagsTool.readPermission, element: <ToolPage def={flagsTool} /> },
-  { path: "/tickets", label: "Support Tickets", icon: ticketsTool.icon!, readPermission: ticketsTool.readPermission, element: <ToolPage def={ticketsTool} /> },
   { path: "/analytics", label: "Analytics", icon: analyticsDashboard.icon!, readPermission: analyticsDashboard.readPermission, element: <DashboardPage def={analyticsDashboard} /> },
   { path: "/audit", label: "Audit Log", icon: auditTool.icon!, readPermission: auditTool.readPermission, element: <ToolPage def={auditTool} /> },
 ];

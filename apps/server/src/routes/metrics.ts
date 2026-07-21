@@ -35,7 +35,6 @@ metricsRouter.get(
     const refundedTotal = one("SELECT COALESCE(SUM(amount),0) s FROM refunds");
     const refundedTxns = one("SELECT COUNT(DISTINCT transactionId) n FROM refunds");
     const pendingKyc = one("SELECT COUNT(*) n FROM kyc_cases WHERE status='pending'");
-    const openTickets = one("SELECT COUNT(*) n FROM support_tickets WHERE status='open'");
     const refundRate = settledCount ? refundedTxns / settledCount : 0;
 
     const refundsByDay = (
@@ -69,7 +68,6 @@ metricsRouter.get(
         { key: "refundedTotal", label: "Total refunded", value: usd(refundedTotal) },
         { key: "refundRate", label: "Refund rate", value: `${(refundRate * 100).toFixed(1)}%` },
         { key: "pendingKyc", label: "KYC pending", value: String(pendingKyc) },
-        { key: "openTickets", label: "Open tickets", value: String(openTickets) },
       ],
       refundsByDay,
       kycFunnel,

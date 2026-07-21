@@ -7,7 +7,6 @@ import { mockAuth } from "./auth.js";
 import { kycRouter } from "./routes/kyc.js";
 import { refundsRouter } from "./routes/refunds.js";
 import { flagsRouter } from "./routes/flags.js";
-import { ticketsRouter } from "./routes/tickets.js";
 import { metricsRouter } from "./routes/metrics.js";
 import { auditRouter } from "./routes/audit.js";
 
@@ -33,7 +32,6 @@ export function createApp() {
   app.use("/api/kyc", kycRouter);
   app.use("/api/refunds", refundsRouter);
   app.use("/api/flags", flagsRouter);
-  app.use("/api/tickets", ticketsRouter);
   app.use("/api/metrics", metricsRouter);
   app.use("/api/audit", auditRouter);
 

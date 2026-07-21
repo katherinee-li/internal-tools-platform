@@ -9,7 +9,7 @@ function iso(daysAgo: number): string {
 
 export function seed(): void {
   const db = getDb();
-  const tables = ["kyc_cases", "transactions", "refunds", "feature_flags", "support_tickets", "audit_events"];
+  const tables = ["kyc_cases", "transactions", "refunds", "feature_flags", "audit_events"];
   for (const t of tables) db.exec(`DELETE FROM ${t};`);
 
   const kyc = db.prepare(
@@ -90,20 +90,7 @@ export function seed(): void {
     }
   }
 
-  const ticket = db.prepare(
-    `INSERT INTO support_tickets (id, subject, customerName, priority, status, createdAt)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-  );
-  const ticketRows: Array<[string, string, string, string, string, number]> = [
-    ["tkt_3001", "Cannot access dashboard", "Maria Gomez", "high", "open", 1],
-    ["tkt_3002", "Refund not received", "Liu Wei", "medium", "open", 2],
-    ["tkt_3003", "Feature request: CSV export", "John Smith", "low", "pending", 3],
-    ["tkt_3004", "Duplicate charge", "Amara Okafor", "high", "resolved", 4],
-    ["tkt_3005", "Login 2FA issue", "Kenji Tanaka", "medium", "open", 5],
-  ];
-  for (const r of ticketRows) ticket.run(r[0], r[1], r[2], r[3], r[4], iso(r[5]));
-
-  console.log("[seed] done:", { kyc: kycRows.length, transactions: txnRows.length, flags: flagDefs.length * ENVIRONMENTS.length, tickets: ticketRows.length });
+  console.log("[seed] done:", { kyc: kycRows.length, transactions: txnRows.length, flags: flagDefs.length * ENVIRONMENTS.length });
 }
 
 // Only auto-run when invoked directly (e.g. `npm run seed`), not when imported by tests.

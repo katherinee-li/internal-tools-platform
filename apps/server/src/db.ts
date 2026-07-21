@@ -49,18 +49,6 @@ CREATE TABLE IF NOT EXISTS feature_flags (
   PRIMARY KEY (key, environment)
 );
 
-CREATE TABLE IF NOT EXISTS support_tickets (
-  id TEXT PRIMARY KEY,
-  subject TEXT NOT NULL,
-  customerName TEXT NOT NULL,
-  priority TEXT NOT NULL,
-  status TEXT NOT NULL,
-  createdAt TEXT NOT NULL,
-  note TEXT,
-  updatedBy TEXT,
-  updatedAt TEXT
-);
-
 -- Append-only audit log. No UPDATE/DELETE is ever issued against this table.
 CREATE TABLE IF NOT EXISTS audit_events (
   id TEXT PRIMARY KEY,

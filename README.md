@@ -4,8 +4,9 @@ A reusable internal-tools platform, built with Devin, that demonstrates whether 
 platform can reproduce the **reusable capabilities** behind a company's Retool usage — not just a
 few one-off pages.
 
-Five tools run on one shared platform — one data layer, one role-based permission model, one audit
-pipeline, and reusable UI — so that adding the next tool is mostly configuration.
+Four tools — three core workflows plus a non-CRUD analytics dashboard — run on one shared platform
+(one data layer, one role-based permission model, one audit pipeline, reusable UI), so that adding
+the next tool is mostly configuration.
 
 > This is an evaluation prototype: it optimizes for reusable architecture and clear evidence, **not**
 > production hardening. See [`EVALUATION.md`](./EVALUATION.md) for the scored evaluation and the
@@ -19,7 +20,6 @@ pipeline, and reusable UI — so that adding the next tool is mostly configurati
 | **KYC Review** | Search/filter by name, status, risk; approve / reject / escalate with a mandatory reviewer note; audit logging |
 | **Refunds** | Transaction search; issue refund with validation (settled-only, ≤ refundable, no double refund); reason + confirmation; audit logging |
 | **Feature Flags** | View/modify flags per environment; enable + rollout %; **production safeguard** (Admin-only + explicit confirm); audit logging |
-| **Support Tickets** | A CRUD tool showing how cheap the next table-style tool is to add |
 | **Operations Analytics** | A non-CRUD dashboard — KPI cards and charts over aggregated queries — showing the platform generalizes past table/form CRUD |
 | **Audit Log** | Read-only view of every mutating action across all tools, including denied and failed attempts |
 
@@ -46,7 +46,7 @@ A development-only role selector (top-right) switches between:
 | Role | Access |
 | --- | --- |
 | **Viewer** | Read-only across all tools |
-| **Operator** | KYC decisions, refunds, ticket updates, non-production flag changes |
+| **Operator** | KYC decisions, refunds, non-production flag changes |
 | **Admin** | Everything, including production feature-flag changes |
 
 RBAC is enforced **server-side** — switching roles in the client cannot bypass it.
