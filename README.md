@@ -4,7 +4,7 @@ A lightweight, reusable internal-tools platform that demonstrates whether an in-
 
 Three internal apps (KYC Review, Refunds, Feature Flags) plus a fourth tool (Support Tickets) and an Audit Log are all built on a single shared platform: one data layer, one RBAC model, one audit pipeline, and a declarative **tool-definition** engine. Adding a new tool is mostly configuration.
 
-> This is an evaluation prototype. It optimizes for reusable architecture, maintainability, and clear evidence — **not** visual polish or production hardening. See [`BUILD_VS_BUY.md`](./BUILD_VS_BUY.md) for the recommendation and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the process log.
+> This is an evaluation prototype. It optimizes for reusable architecture, maintainability, and clear evidence — **not** visual polish or production hardening. See [`BUILD_VS_BUY.md`](./BUILD_VS_BUY.md) for the recommendation, [`EVALUATION.md`](./EVALUATION.md) for the scored evaluation framework + metrics, and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the process log.
 
 ## What's inside
 
