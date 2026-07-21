@@ -3,7 +3,7 @@ import type { Permission, Role } from "./types.js";
 // Single source of truth for role -> permission mapping.
 // Enforced on the server; also used on the client to hide/disable UI.
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  viewer: ["kyc.read", "refund.read", "flag.read", "ticket.read", "rates.read", "audit.read"],
+  viewer: ["kyc.read", "refund.read", "flag.read", "ticket.read", "rates.read", "metrics.read", "audit.read"],
   operator: [
     "kyc.read",
     "kyc.decide",
@@ -14,6 +14,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "ticket.read",
     "ticket.write",
     "rates.read",
+    "metrics.read",
     "audit.read",
   ],
   admin: [
@@ -27,6 +28,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "ticket.read",
     "ticket.write",
     "rates.read",
+    "metrics.read",
     "audit.read",
   ],
 };

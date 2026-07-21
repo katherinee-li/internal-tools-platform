@@ -25,6 +25,7 @@ export type Permission =
   | "ticket.read"
   | "ticket.write"
   | "rates.read"
+  | "metrics.read"
   | "audit.read";
 
 // ---- KYC -----------------------------------------------------------------
@@ -131,6 +132,29 @@ export interface FxRate {
   rate: number; // units of `currency` per 1 `base`
   inverse: number; // units of `base` per 1 `currency`
   asOf: string; // date the rate was published
+}
+
+// ---- Analytics dashboard (non-CRUD tool: charts + aggregation) -----------
+// This surface deliberately does NOT fit the table-list-form ToolDefinition
+// engine; it exercises a separate chart/aggregation primitive.
+
+export interface MetricPoint {
+  label: string;
+  value: number;
+  secondary?: number;
+}
+
+export interface DashboardKpi {
+  key: string;
+  label: string;
+  value: string;
+}
+
+export interface DashboardData {
+  kpis: DashboardKpi[];
+  refundsByDay: MetricPoint[]; // label=date, value=amount(cents), secondary=count
+  kycFunnel: MetricPoint[]; // label=status, value=count
+  refundReasons: MetricPoint[]; // label=reason, value=count
 }
 
 // ---- Audit ---------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 A lightweight, reusable internal-tools platform that demonstrates whether an in-house platform (built with Devin) can reproduce the **reusable capabilities** behind a company's Retool usage — not just three one-off pages.
 
-Three internal apps (KYC Review, Refunds, Feature Flags) plus a fourth tool (Support Tickets) and an Audit Log are all built on a single shared platform: one data layer, one RBAC model, one audit pipeline, and a declarative **tool-definition** engine. Adding a new tool is mostly configuration.
+Three internal apps (KYC Review, Refunds, Feature Flags) plus a Support Tickets tool, a live-data FX Rates tool, a non-CRUD Operations Analytics dashboard, and an Audit Log are all built on a single shared platform: one data layer, one RBAC model, one audit pipeline, and declarative **tool-definition** and **dashboard-definition** engines. Adding a new tool is mostly configuration.
 
 > This is an evaluation prototype. It optimizes for reusable architecture, maintainability, and clear evidence — **not** visual polish or production hardening. See [`BUILD_VS_BUY.md`](./BUILD_VS_BUY.md) for the recommendation, [`EVALUATION.md`](./EVALUATION.md) for the scored evaluation framework + metrics, and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the process log.
 
@@ -15,6 +15,7 @@ Three internal apps (KYC Review, Refunds, Feature Flags) plus a fourth tool (Sup
 | **Feature Flag Admin** | View/modify flags per environment; enable + rollout %; environment selector; **production safeguard** (Admin-only + explicit confirm); role restrictions; audit logging |
 | **Support Tickets** (4th tool) | Added as a marginal-cost experiment to measure how cheap the *next* tool is |
 | **FX Rates (live)** | Read-only tool backed by a **live external REST API** through the platform's connector abstraction — proves the platform is not limited to mock/local data |
+| **Operations Analytics** (non-CRUD) | KPI cards + refund-trend/KYC-funnel/reason charts over aggregated `GROUP BY` queries — proves the platform generalizes past table-list-form CRUD via a reusable chart/dashboard primitive |
 | **Audit Log** | Read-only view of every mutating action across all tools — including denied and failed attempts |
 
 ## Architecture

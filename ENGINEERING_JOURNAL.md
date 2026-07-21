@@ -34,7 +34,21 @@ Added after the initial time box, in response to "what is the remaining budget b
 | ~15m | 2:55 | **Validation pass**: 40 scripted API checks (full RBAC matrix, refund/flag/KYC edge cases, audit integrity, CORS) — 40/40 passed. |
 | ~10m | 3:05 | Docs updates (README, report, this journal) + commit/push; CI green on the PR. |
 
-**Phase 2 subtotal ≈ 1h05m. Cumulative total ≈ 3h05m** (within the exercise's 3–4h guideline).
+**Phase 2 subtotal ≈ 1h05m. Cumulative ≈ 3h05m active.**
+
+### Phase 3 — Evaluation-framework revision (continuation session)
+
+Prompted by a structured critique of the six-criterion framework: consolidate to four criteria, add a *non-CRUD* tool to report marginal cost as two honest numbers, and correct the production estimate.
+
+| Duration | Cumulative | Activity |
+| --- | --- | --- |
+| ~15m | 3:20 | Restructured `EVALUATION.md` to **4 criteria** (Economics/TCO absorbing leverage + build-time standardization; Security; Ownership & operations with reliability folded in; new **Flexibility & authoring**). Kept every [measured]/[estimated] metric. |
+| ~15m | 3:35 | Built the **non-CRUD analytics dashboard** (tool #6): a new **chart/aggregation primitive** (`charts.tsx` + `DashboardPage` + `DashboardDefinition`) + a `/metrics/dashboard` aggregation endpoint + a test + demo seed refunds. Measured cost: ~15 min end-to-end, **1 new primitive**, ~120 LOC workflow. |
+| ~15m | 3:50 | **Corrected estimates**: build effort 13–25 → **7–14 eng-weeks** (existing IdP/infra assumption), added wage-band sensitivity, a **hybrid dual-running** cost line, and an explicit **break-even tool count**; kept calendar at 3–6 mo. Docs + push; CI green. |
+
+**Phase 3 subtotal ≈ 45m. Cumulative total ≈ 3h50m active** (duration, not wall-clock — excludes an idle break between sessions).
+
+> **Note on the two-number marginal cost.** Tool #4 (CRUD, ~80s, 0 new primitives) is the *floor* — the most flattering case. Tool #6 (non-CRUD dashboard, ~15 min, 1 new reusable primitive) is the honest ceiling: a genuinely different tool type costs one new primitive, then is config thereafter. Reporting both pre-empts the "you cherry-picked the easy case" objection.
 
 ## Architectural decisions
 

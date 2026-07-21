@@ -32,8 +32,8 @@ export function seed(): void {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   const txnRows: Array<[string, string, string, number, string, number, string, number]> = [
-    ["txn_2001", "Maria Gomez", "maria@example.com", 12000, "USD", 1, "settled", 0],
-    ["txn_2002", "Liu Wei", "liu@example.com", 4500, "USD", 2, "settled", 0],
+    ["txn_2001", "Maria Gomez", "maria@example.com", 12000, "USD", 1, "settled", 2000],
+    ["txn_2002", "Liu Wei", "liu@example.com", 4500, "USD", 2, "settled", 1500],
     ["txn_2003", "John Smith", "john@example.com", 9900, "USD", 3, "settled", 5000],
     ["txn_2004", "Amara Okafor", "amara@example.com", 25000, "USD", 4, "settled", 25000],
     ["txn_2005", "Sofia Rossi", "sofia@example.com", 1500, "USD", 5, "pending", 0],
@@ -41,6 +41,35 @@ export function seed(): void {
     ["txn_2007", "Priya Nair", "priya@example.com", 32000, "USD", 7, "settled", 0],
   ];
   for (const r of txnRows) txn.run(r[0], r[1], r[2], r[3], r[4], iso(r[5]), r[6], r[7]);
+
+  // Additional settled transactions (no refunds) so aggregate KPIs — e.g. the
+  // refund rate on the analytics dashboard — read realistically rather than
+  // being dominated by the handful of hand-authored rows above.
+  const filler = [
+    "Noah Baker", "Emma Wilson", "Lucas Silva", "Olivia Chen", "Ethan Park",
+    "Ava Martin", "Leo Dubois", "Mia Rossi", "Ivan Petrov", "Zoe Clarke",
+    "Omar Haddad", "Nina Kaur", "Felix Wagner", "Sara Lopez", "Hugo Meyer",
+  ];
+  filler.forEach((name, i) => {
+    const amount = 1500 + ((i * 2137) % 28000);
+    const days = 1 + (i % 7);
+    const email = `${name.split(" ")[0].toLowerCase()}@example.com`;
+    txn.run(`txn_21${String(i).padStart(2, "0")}`, name, email, amount, "USD", iso(days), "settled", 0);
+  });
+
+  // Historical refunds (kept consistent with transactions.refundedAmount) so the
+  // analytics dashboard has a trend + reason breakdown to aggregate.
+  const refund = db.prepare(
+    `INSERT INTO refunds (id, transactionId, amount, reason, note, issuedBy, issuedAt)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  );
+  const refundRows: Array<[string, string, number, string, number]> = [
+    ["ref_9001", "txn_2001", 2000, "duplicate_charge", 1],
+    ["ref_9002", "txn_2002", 1500, "customer_request", 2],
+    ["ref_9003", "txn_2003", 5000, "product_issue", 3],
+    ["ref_9004", "txn_2004", 25000, "fraud", 4],
+  ];
+  for (const r of refundRows) refund.run(r[0], r[1], r[2], r[3], null, "u_operator", iso(r[4]));
 
   const flag = db.prepare(
     `INSERT INTO feature_flags (key, environment, description, enabled, rolloutPercentage, updatedBy, updatedAt)
