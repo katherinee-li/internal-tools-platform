@@ -1,19 +1,40 @@
 # Engineering Journal
 
-A chronological log of decisions, assumptions, tradeoffs, blockers, and observations during the build. Times are UTC on 2026-07-20. This records *what happened and the evidence*, not a self-assessment of quality.
+A chronological log of decisions, assumptions, tradeoffs, blockers, and observations during the build. The timeline below uses **relative elapsed time** (T+0 = the first scaffold commit) and reports **durations, not clock times** — what matters is how long each thing took, and how the original prototype connects to the later enhancements. This records *what happened and the evidence*, not a self-assessment of quality.
 
-## Timeline
+## Timeline (relative; durations, not clock times)
 
-| Time (UTC) | Activity |
-| --- | --- |
-| 23:29 | Repo scaffolded (npm workspaces). Chose npm workspaces after `pnpm`/global install failed with `EACCES` (no sudo) — a workaround, not a preference. |
-| 23:29–23:40 | Foundation built serially: `packages/shared` (types + RBAC + validation contracts), `apps/server` (Express + SQLite + seed + audit + RBAC middleware), `apps/web` platform primitives + tool-definition engine, and the Feature Flags reference tool. Then KYC, Refunds, and the Audit viewer as tool-definitions. |
-| ~23:40 | **45-minute checkpoint** (reached early). Verified via adversarial `curl`: server-enforced RBAC, append-only audit, refund/KYC/flag validation all working end-to-end. Decision: no need to simplify architecture; continue as planned. |
-| ~23:42 | Verified the web UI in a browser; confirmed role-gating renders (Viewer's action buttons are `disabled` with a "Requires \<permission\>" tooltip). |
-| 23:43:13–23:44:31 | **Fourth-tool experiment** (Support Tickets). See metrics below. |
-| ~23:47 | Automated test suite (vitest + supertest): 8 tests incl. all six required adversarial scenarios. All pass. |
-| ~23:49 | Added ESLint (typescript-eslint, `no-explicit-any`, react-hooks). Fixed 2 errors + 3 warnings. Full gate green: lint + typecheck + test + build. |
-| ~23:52 | Documentation (README, this journal, build-vs-buy report). |
+`Duration` is how long the step took; `Cumulative` is total elapsed since T+0. Durations are approximate (±); sub-minute steps are noted where measured.
+
+### Phase 1 — Prototype (initial session)
+
+| Duration | Cumulative | Activity |
+| --- | --- | --- |
+| ~11m | 0:11 | Scaffold (npm workspaces — chosen after `pnpm`/global install hit `EACCES`, no sudo) + foundation built serially: `packages/shared` (types/RBAC/validation), `apps/server` (Express+SQLite+seed+audit+RBAC middleware), `apps/web` platform primitives + tool-definition engine, then all three workflows (KYC, Refunds, Feature Flags) + the Audit viewer. |
+| ~1m | 0:12 | **45-minute checkpoint, reached early.** Adversarial `curl` confirms server-enforced RBAC, append-only audit, and refund/KYC/flag validation end-to-end. Decision: keep the architecture, continue. |
+| ~2m | 0:14 | Browser check: role-gating renders (Viewer actions `disabled` with a "Requires \<permission\>" tooltip). |
+| ~80s | 0:16 | **Fourth-tool experiment** (Support Tickets) — see metrics below. |
+| ~2m | 0:18 | Automated adversarial suite (8 tests, all six required scenarios) green. |
+| ~2m | 0:20 | ESLint added (typescript-eslint, `no-explicit-any`, react-hooks); fixed 2 errors/3 warnings; full gate green (lint/typecheck/test/build). |
+| ~5m | 0:25 | Docs: README, this journal, build-vs-buy report. |
+| ~12m | 0:37 | After the user created the repo: pushed, opened PR #1, applied 3 Devin Review fixes (ISO seed dates ×2, CORS restriction), environment blueprint. |
+| ~38m | 1:15 | End-to-end UI testing + annotated screen recording (Viewer/Operator/Admin, golden + adversarial paths); test report; PR evidence comment. |
+
+**Phase 1 subtotal ≈ 1h15m.** Note: hands-on *construction* of the working platform + all workflows was only ~20–25m (T+0 → docs); the rest of Phase 1 is PR/review/testing/recording. This is the "build is cheap, everything around it isn't" pattern the report analyzes.
+
+### Phase 2 — Post-review enhancements (continuation session)
+
+Added after the initial time box, in response to "what is the remaining budget best spent on?" — chosen for evidence value to a VP, not polish.
+
+| Duration | Cumulative | Activity |
+| --- | --- | --- |
+| ~10m | 1:25 | Reworked the build-vs-buy estimate: split **build effort vs calendar-to-production**, added the org-availability (instant reviews/approvals) compression analysis and its hard floors. |
+| ~45m | 2:10 | **Connector abstraction**: `Connector` interface + `SqliteConnector` + `RestConnector` (central auth-header injection, timeout, uniform error mapping); added the live **FX Rates** tool (reads a real external REST API) + 2 deterministic connector unit tests. |
+| ~30m | 2:40 | **Deployable artifact + CI**: single-image `SERVE_WEB` mode, Dockerfile/`docker compose` (image built and container verified serving web + API + live connector on one port), GitHub Actions running the full gate on every push/PR. |
+| ~15m | 2:55 | **Validation pass**: 40 scripted API checks (full RBAC matrix, refund/flag/KYC edge cases, audit integrity, CORS) — 40/40 passed. |
+| ~10m | 3:05 | Docs updates (README, report, this journal) + commit/push; CI green on the PR. |
+
+**Phase 2 subtotal ≈ 1h05m. Cumulative total ≈ 3h05m** (within the exercise's 3–4h guideline).
 
 ## Architectural decisions
 
