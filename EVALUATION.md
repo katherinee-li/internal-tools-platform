@@ -25,7 +25,9 @@ the two renamings it proposes ("*changes* long-term ownership cost", operational
 | LOC generated | **~2,464** lines TS/TSX (+ docs), large majority Devin-generated | [measured] `wc -l` |
 | Tests generated | **11** automated (vitest+supertest) + a **40-check** API validation harness | [measured] |
 | Time to build tool #1 vs #4 | Tool #1 (Feature Flags reference) built within the ~11m foundation; **tool #4 ≈ 80s**; tool #5 (live-connector FX) ≈ 30 LOC config + one route | [measured] |
-| Devin usage / ACUs & cost | **[estimated — confirm on the usage dashboard]** prototype in the low-hundreds-of-dollars of ACUs; marginal per-tool cost negligible | [estimated] |
+| Devin usage / ACUs & cost | **~$16.47** total for the entire engagement (prototype + connectors + Docker/CI + validation + all analysis docs) — from the usage dashboard. ≈ **$5/active Devin-hour, ~$0.007/LOC**. Marginal per-tool cost negligible. | [measured] |
+
+**Cost extrapolation to a full production build.** At the prototype's ~$5/Devin-hour rate, hardening the current 3 tools (§3 = 3–6 eng-months ≈ 520–1,040 eng-hours) — even valuing *all* of that time at the Devin rate and applying a 2–3× multiplier for the heavier iteration/test cycles real production code needs — lands at **~$5K–$15K one-time in Devin compute**, plus **~$1K–$4K/yr** for Devin-assisted maintenance. **This is a rounding error** next to the human costs in §6 (~$75K–$150K hardening, ~$62K–$125K/yr maintenance) and the $250K/yr license. Takeaway: Devin collapses *implementation* cost toward zero; the build-vs-buy decision is driven by human time, ownership, opportunity cost, and calendar — **not** by what Devin costs to run.
 
 **Strongest evidence:** the 4th tool took ~80s and required **no new platform primitives**.
 
@@ -103,17 +105,18 @@ the two renamings it proposes ("*changes* long-term ownership cost", operational
 
 | Cost line | In-house (build) | Notes |
 | --- | --- | --- |
-| One-time: production hardening | **$75K–$150K** | 3–6 eng-months + review/pentest/integration overhead |
+| One-time: production hardening (human) | **$75K–$150K** | 3–6 eng-months + review/pentest/integration overhead |
+| One-time: Devin compute for that build | **$5K–$15K** | extrapolated from the measured ~$16.47 prototype (§1) — immaterial |
 | One-time: Retool migration | **$20K–$40K** | rebuild + data/user move + parallel run |
-| Recurring: maintenance | **$62K–$125K/yr** | 0.25–0.5 FTE |
+| Recurring: maintenance (human) | **$62K–$125K/yr** | 0.25–0.5 FTE |
 | Recurring: infra (hosting, DB, backups, monitoring) | **$10K–$30K/yr** | [estimated] |
 | Recurring: third-party (IdP seats, connector vendor APIs, error tracking, annual pentest) | **$15K–$40K/yr** | [estimated] |
-| Recurring: Devin ACUs (ongoing build/maintenance) | **$5K–$20K/yr** | [estimated — confirm] |
-| **Recurring subtotal** | **~$92K–$215K/yr** | vs Retool **$250K/yr** |
-| **Year-1 total (one-time + recurring)** | **~$187K–$405K** | vs Retool **$250K** |
+| Recurring: Devin ACUs (ongoing build/maintenance) | **$1K–$4K/yr** | revised down from the measured prototype cost — a rounding error |
+| **Recurring subtotal** | **~$88K–$199K/yr** | vs Retool **$250K/yr** |
+| **Year-1 total (one-time + recurring)** | **~$188K–$404K** | vs Retool **$250K** |
 
 **Reading the model honestly:**
-- **Steady state** (year 2+): in-house recurring (~$92K–$215K) can undercut Retool's $250K — *if* maintenance stays at the low end and nothing major breaks.
+- **Steady state** (year 2+): in-house recurring (~$88K–$199K) can undercut Retool's $250K — *if* maintenance stays at the low end and nothing major breaks. Note the Devin compute portion (~$1K–$4K/yr) is trivial — the recurring cost is almost entirely **human** maintenance + infra + third-party.
 - **Year 1** is a wash-to-worse once one-time hardening + migration are included, and you absorb execution risk Retool otherwise carries.
 - **Payback** on the one-time spend is **~1–4 years** at the modeled savings — fragile, because the fintech-realistic case pushes maintenance/compliance to the high end and can erase the delta.
 - **Opportunity cost is the decisive term at 3 tools:** pulling 1–2 senior engineers off customer-facing/revenue work for months at a Series C typically costs more than the license delta.
