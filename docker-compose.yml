@@ -1,0 +1,16 @@
+# One-command run of the prototype as a container.
+#   docker compose up --build   ->   open http://localhost:4000
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      # Same-origin in the single container, so no extra CORS origin needed.
+      CORS_ORIGINS: "http://localhost:4000"
+      # Optional: provide a key for a real/paid data-source connector.
+      # FX_API_KEY: "..."
+    volumes:
+      - app-data:/app/data
+volumes:
+  app-data:

@@ -14,6 +14,7 @@ Three internal apps (KYC Review, Refunds, Feature Flags) plus a fourth tool (Sup
 | **Refund Dashboard** | Transaction search; issue refund with validation (settled-only, ≤ refundable, positive); refund reasons; confirmation flow; audit logging |
 | **Feature Flag Admin** | View/modify flags per environment; enable + rollout %; environment selector; **production safeguard** (Admin-only + explicit confirm); role restrictions; audit logging |
 | **Support Tickets** (4th tool) | Added as a marginal-cost experiment to measure how cheap the *next* tool is |
+| **FX Rates (live)** | Read-only tool backed by a **live external REST API** through the platform's connector abstraction — proves the platform is not limited to mock/local data |
 | **Audit Log** | Read-only view of every mutating action across all tools — including denied and failed attempts |
 
 ## Architecture
@@ -29,6 +30,7 @@ apps/web            React + Vite. Reusable platform primitives + tool-definition
 ### Reusable platform primitives
 
 - **Data layer** (`apps/web/src/platform/api.ts`) — one typed client; injects the (dev) role header, parses the API error envelope, throws typed errors.
+- **Connector abstraction** (`apps/server/src/connectors/`) — a single `Connector` interface with two implementations: `SqliteConnector` (local DB) and `RestConnector` (live external HTTP APIs, with auth header injected centrally, timeouts, and uniform error mapping). A tool is indifferent to whether its rows come from SQL or a third-party service — this is the miniature of Retool's "managed connectors" value. The **FX Rates** tool reads live rates through `RestConnector`.
 - **Auth + RBAC** (`packages/shared/src/rbac.ts`, `apps/server/src/auth.ts`) — a single role→permission matrix used on **both** sides: the client hides/disables actions, the server *enforces* them and audits denials.
 - **Audit** (`apps/server/src/audit.ts`) — one append-only writer used by every mutating endpoint; success, denied, and error outcomes are all recorded.
 - **UI kit** (`apps/web/src/platform/`) — `AppShell` + nav + dev role selector, `DataTable`, schema-driven `ActionForm`/`Modal`, `SearchFilterBar`, badges, toasts, loading/error/empty states.
@@ -60,6 +62,14 @@ npm run dev          # start API (:4000) + web (:5173) together
 
 Then open http://localhost:5173 and use the role selector (top-right) to try Viewer / Operator / Admin.
 
+### Run as a single container
+
+```bash
+docker compose up --build     # then open http://localhost:4000
+```
+
+The Docker image builds the web app and serves it from the API process on one port (`SERVE_WEB=1`), demonstrating the app is deployable as a single artifact. It is a prototype container, not production-hardened (see limitations).
+
 > `npm run dev` writes `data.db` in the repo (gitignored). Re-run `npm run seed` any time to reset to a clean state.
 
 ## Quality gates
@@ -67,9 +77,11 @@ Then open http://localhost:5173 and use the role selector (top-right) to try Vie
 ```bash
 npm run lint         # eslint (typescript-eslint, no-explicit-any, react-hooks)
 npm run typecheck    # tsc --noEmit across all workspaces
-npm test             # vitest + supertest — RBAC + validation + audit (incl. 6 adversarial scenarios)
+npm test             # vitest + supertest — RBAC + validation + audit + connectors (11 tests)
 npm run build        # production web build
 ```
+
+These run in CI on every push/PR via GitHub Actions (`.github/workflows/ci.yml`).
 
 The test suite (`apps/server/src/platform.test.ts`) covers the negative paths explicitly:
 Viewer→refund (denied), Operator→production flag (denied), refund > refundable, double refund, KYC decision with no note, and that **failed/denied actions never produce a `success` audit event**.

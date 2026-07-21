@@ -19,16 +19,18 @@ The prototype reproduces the core reusable platform layer:
 - **Audit logging** — one append-only pipeline capturing every mutating action (success/denied/error) across all tools.
 - **Consequential-action safeguards** — production flag writes require a distinct Admin-only permission plus explicit confirmation.
 - **Validation & confirmation flows** — shared validators (refund ≤ refundable, settled-only, mandatory KYC note) enforced on the server.
-- **All three required workflows + a fourth**, visibly built on the same platform.
+- **Connector abstraction (thin slice)** — a single `Connector` interface with a `SqliteConnector` (local DB) and a `RestConnector` (live external HTTP APIs; auth header injected centrally, timeouts, uniform error mapping). The **FX Rates** tool reads from a *live* third-party API through it, proving the platform is not limited to mock data and that a new data source is just another connector.
+- **Deployable artifact + CI** — a Dockerfile/`docker compose` runs the whole app as one container (web served from the API process), and GitHub Actions runs lint/typecheck/test/build on every push/PR.
+- **All three required workflows + a fourth + a live-data fifth tool**, visibly built on the same platform.
 
 ## 2. What remains missing compared to Retool
 
 Retool is far more than these primitives. Not attempted (and material):
 
 - **Visual/low-code builder** — drag-and-drop app building; **non-engineers** can build and iterate. The prototype requires engineers writing TypeScript.
-- **Managed connectors** — 100+ maintained integrations (Postgres, Stripe, Snowflake, REST/GraphQL, SaaS APIs) with auth handled. We used mock data.
+- **Managed connectors (breadth)** — we built the *connector seam* and one live REST connector, but Retool ships **100+ maintained integrations** (Postgres, Stripe, Snowflake, GraphQL, SaaS APIs) with auth, pagination, and rate-limits handled and **kept up to date for you**. Owning connectors means building and maintaining each one yourself — the abstraction is cheap; the catalog and its upkeep are the real cost.
 - **Real identity** — SSO/SAML/OIDC, SCIM provisioning, sessions. We use a dev role selector.
-- **Hosting & deployment** — cloud or self-hosted (Docker/K8s) in ~15 min; upgrades handled. We have none.
+- **Hosting & deployment (managed)** — we produce a working container and CI, but Retool offers one-click cloud or self-hosted (Docker/K8s) deploys with **upgrades, backups, and scaling handled**. Our container is a prototype artifact, not a hardened, monitored, auto-upgraded deployment.
 - **Governance at scale** — audit export/retention, environment promotion, granular permission groups, change management, protected resources, source control sync.
 - **Operational surface** — monitoring, usage analytics, SLAs/support, security certifications (SOC 2, etc.), workflows/automation (cron), query library, modules, mobile.
 

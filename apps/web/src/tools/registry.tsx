@@ -4,6 +4,7 @@ import { kycTool } from "./kyc";
 import { refundsTool } from "./refunds";
 import { flagsTool } from "./flags";
 import { ticketsTool } from "./tickets";
+import { ratesTool } from "./rates";
 import { auditTool } from "./audit";
 
 export interface RegisteredTool {
@@ -21,5 +22,6 @@ export const TOOLS: RegisteredTool[] = [
   { path: "/refunds", label: "Refunds", icon: refundsTool.icon!, readPermission: refundsTool.readPermission, element: <ToolPage def={refundsTool} /> },
   { path: "/flags", label: "Feature Flags", icon: flagsTool.icon!, readPermission: flagsTool.readPermission, element: <ToolPage def={flagsTool} /> },
   { path: "/tickets", label: "Support Tickets", icon: ticketsTool.icon!, readPermission: ticketsTool.readPermission, element: <ToolPage def={ticketsTool} /> },
+  { path: "/rates", label: "FX Rates (live)", icon: ratesTool.icon!, readPermission: ratesTool.readPermission, element: <ToolPage def={ratesTool} /> },
   { path: "/audit", label: "Audit Log", icon: auditTool.icon!, readPermission: auditTool.readPermission, element: <ToolPage def={auditTool} /> },
 ];

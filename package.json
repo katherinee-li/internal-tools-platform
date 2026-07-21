@@ -13,6 +13,7 @@
     "dev:server": "npm run dev -w @platform/server",
     "dev:web": "npm run dev -w @platform/web",
     "build": "npm run build -w @platform/web",
+    "start": "SERVE_WEB=1 npm run start -w @platform/server",
     "typecheck": "npm run typecheck -w @platform/shared && npm run typecheck -w @platform/server && npm run typecheck -w @platform/web",
     "lint": "eslint .",
     "test": "npm run test -w @platform/server"
