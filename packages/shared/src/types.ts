@@ -24,7 +24,6 @@ export type Permission =
   | "flag.write.production"
   | "ticket.read"
   | "ticket.write"
-  | "rates.read"
   | "metrics.read"
   | "audit.read";
 
@@ -122,16 +121,6 @@ export interface SupportTicket {
   note?: string;
   updatedBy?: string;
   updatedAt?: string;
-}
-
-// ---- FX rates (read-only tool backed by a live REST connector) -----------
-
-export interface FxRate {
-  base: string; // e.g. "USD"
-  currency: string; // e.g. "EUR"
-  rate: number; // units of `currency` per 1 `base`
-  inverse: number; // units of `base` per 1 `currency`
-  asOf: string; // date the rate was published
 }
 
 // ---- Analytics dashboard (non-CRUD tool: charts + aggregation) -----------
