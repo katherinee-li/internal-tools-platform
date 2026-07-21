@@ -34,20 +34,26 @@ Retool is far more than these primitives. Not attempted (and material):
 
 ## 3. Estimated engineering effort to reach production quality
 
-Taking the prototype to a **production-grade platform for the current 3 tools** (not feature-parity with Retool):
+Taking the prototype to a **production-grade platform for the current 3 tools** (not feature-parity with Retool). **Read the two right-hand columns separately** — "build effort" is how much *construction* work there is; "calendar" is how long it takes to actually ship in a regulated fintech, which is dominated by review/integration/approval latency, not typing.
 
-| Area | Effort (eng-weeks) |
-| --- | --- |
-| Real auth (SSO/OIDC), sessions, CSRF, SCIM | 2–4 |
-| Postgres + migrations + real data-source connectors (Stripe, KYC vendor, flag store) | 3–6 |
-| Audit integrity (append-only/hash-chained, retention, SIEM export) | 1–2 |
-| RBAC admin UI + fine-grained/record-level permissions + maker-checker | 2–4 |
-| Deployment (VPC, TLS, CI/CD), monitoring, alerting, health checks | 2–4 |
-| Hardening (rate limits, input validation at edge, secrets mgmt, pen-test fixes) | 2–3 |
-| Accessibility, polish, docs, on-call runbooks | 1–2 |
-| **Total** | **~13–25 eng-weeks (~3–6 eng-months) for a solid v1** |
+| Area | Build effort (eng-weeks) | Calendar driver |
+| --- | --- | --- |
+| Real auth (SSO/OIDC), sessions, CSRF, SCIM | 2–4 | IdP/IT wiring + security sign-off (approval-bound) |
+| Postgres + migrations + real connectors (Stripe, KYC vendor, flag store) | 3–6 | Vendor credentials/sandbox access + integration testing (external-party-bound) |
+| Audit integrity (append-only/hash-chained, retention, SIEM export) | 1–2 | Compliance review |
+| RBAC admin UI + fine-grained/record-level permissions + maker-checker | 2–4 | Access-model review |
+| Deployment (VPC, TLS, CI/CD), monitoring, alerting, health checks | 2–4 | Infra procurement + fit to existing envelope |
+| Hardening (rate limits, edge validation, secrets mgmt, pen-test fixes) | 2–3 | Pen-test scheduling + burn-in (elapsed-time-bound) |
+| Accessibility, polish, docs, on-call runbooks | 1–2 | — |
+| **Total build effort** | **~13–25 eng-weeks** | — |
 
-Devin compresses the *code-writing* portion of this substantially, but much of the above is integration, review, security, and operational work that still needs experienced human engineers.
+**Effort vs. calendar — the distinction that matters most here:**
+
+- **Build effort ≈ 3–6 engineer-months** of construction. Devin compresses the code-writing sharply (the reusable platform layer in this repo was built in ~20 minutes of Devin time), and with parallel subagents on independent tools/connectors the *coding* wall-clock can shrink to **~1–2 weeks**.
+- **Calendar-to-production ≈ 3–6 months regardless**, because the long pole is **not code**. It's integration with external parties (vendor sandbox/prod credentials, IdP provisioning, infra procurement), security/compliance review and sign-off, and elapsed-time gates (pen-test windows, change-management burn-in, SOC 2 observation, data-migration validation).
+- **Can you compress the calendar?** Partly. If the org goes all-in — everyone available, reviews/approvals returned in minutes not days — you collapse the **queue/wait latency**, which is the biggest single chunk, and months → **weeks (~4–8)** becomes plausible when combined with subagents. But three floors don't move: (a) **external parties on their own clock** (Stripe/KYC vendor/IdP), (b) **elapsed-time requirements** (pen-test, burn-in, audit windows), and (c) **sequential chains** (can't review unbuilt code, can't pentest before staging). And rushing approvals only helps if they stay *real* reviews — rubber-stamping refund/KYC/prod-flag tooling destroys the governance value that justified owning the platform. "Everyone always available" is also not free: it's real opportunity cost for security/IT/compliance.
+
+Bottom line for this section: Devin (plus subagents and a committed org) makes the *build* fast and can take the calendar from months toward weeks — but not to days. The residual months are ownership, integration, and governance work, not construction.
 
 ## 4. Estimated ongoing maintenance burden
 
@@ -73,7 +79,10 @@ Devin compresses the *code-writing* portion of this substantially, but much of t
 
 ## 8. Approximate production development effort
 
-- **~3–6 engineer-months** for a hardened v1 covering the current 3 tools (Section 3), plus **~0.25–0.5 FTE ongoing** (Section 4). Feature-parity with Retool's builder/connectors/governance would be materially more and is not recommended to attempt.
+- **Build effort ≈ 3–6 engineer-months** for a hardened v1 covering the current 3 tools (Section 3). The *coding* portion is Devin-compressed and subagent-parallelizable (down to ~1–2 weeks of wall-clock construction).
+- **Calendar-to-production ≈ 3–6 months** under normal operations, dominated by security/compliance review, external-vendor/IdP integration, and elapsed-time gates — **not** code volume. A fully-committed org (instant reviews/approvals) plus subagents can compress this toward **~4–8 weeks**, but external-party, elapsed-time, and sequential floors keep it from reaching days (Section 3).
+- **Ongoing ≈ 0.25–0.5 FTE** (Section 4) — unaffected by build speed; this is the recurring ownership cost.
+- Feature-parity with Retool's builder/connectors/governance would be materially more and is not recommended to attempt.
 
 ## 9. Where Devin provided the greatest leverage
 
@@ -91,7 +100,7 @@ Devin compresses the *code-writing* portion of this substantially, but much of t
 
 ## Recommendation
 
-**Do not wholesale-replace Retool for these three tools today.** The prototype shows the reusable primitives are reproducible and that Devin makes per-tool cost very low — but for only three tools the fully-loaded cost of *owning* a production platform (≈3–6 eng-months to build + ≈0.25–0.5 FTE/yr to run + on-call + security/compliance ownership + opportunity cost) plausibly **meets or exceeds** the $250k Retool spend, while adding risk. You'd be spending engineering to rebuild undifferentiated infrastructure Retool already operates and secures for you.
+**Do not wholesale-replace Retool for these three tools today.** The prototype shows the reusable primitives are reproducible and that Devin makes per-tool cost very low — but for only three tools the fully-loaded cost of *owning* a production platform (≈3–6 engineer-months of build effort — and a ~3–6 month calendar dominated by review/integration/governance, compressible toward weeks only with full org commitment — plus ≈0.25–0.5 FTE/yr to run + on-call + security/compliance ownership + opportunity cost) plausibly **meets or exceeds** the $250k Retool spend, while adding risk. You'd be spending engineering to rebuild undifferentiated infrastructure Retool already operates and secures for you.
 
 **Instead, take a staged / hybrid path:**
 
