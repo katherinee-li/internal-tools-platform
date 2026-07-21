@@ -40,7 +40,7 @@ export function seed(): void {
     ["txn_2006", "Kenji Tanaka", "kenji@example.com", 7800, "USD", 6, "failed", 0],
     ["txn_2007", "Priya Nair", "priya@example.com", 32000, "USD", 7, "settled", 0],
   ];
-  for (const r of txnRows) txn.run(...r);
+  for (const r of txnRows) txn.run(r[0], r[1], r[2], r[3], r[4], iso(r[5]), r[6], r[7]);
 
   const flag = db.prepare(
     `INSERT INTO feature_flags (key, environment, description, enabled, rolloutPercentage, updatedBy, updatedAt)
@@ -72,7 +72,7 @@ export function seed(): void {
     ["tkt_3004", "Duplicate charge", "Amara Okafor", "high", "resolved", 4],
     ["tkt_3005", "Login 2FA issue", "Kenji Tanaka", "medium", "open", 5],
   ];
-  for (const r of ticketRows) ticket.run(...r);
+  for (const r of ticketRows) ticket.run(r[0], r[1], r[2], r[3], r[4], iso(r[5]));
 
   console.log("[seed] done:", { kyc: kycRows.length, transactions: txnRows.length, flags: flagDefs.length * ENVIRONMENTS.length, tickets: ticketRows.length });
 }

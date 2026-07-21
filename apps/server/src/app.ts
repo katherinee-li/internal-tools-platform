@@ -10,7 +10,13 @@ import { auditRouter } from "./routes/audit.js";
 
 export function createApp() {
   const app = express();
-  app.use(cors());
+  // Restrict CORS to the allowed web origins. Defaults to the local Vite dev
+  // server; override with CORS_ORIGINS (comma-separated) in other environments.
+  const allowedOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173")
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+  app.use(cors({ origin: allowedOrigins }));
   app.use(express.json());
   app.use(mockAuth);
 
