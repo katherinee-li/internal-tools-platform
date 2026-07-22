@@ -27,7 +27,7 @@ export type FilterDef =
 export type FormFieldDef =
   | { type: "text"; name: string; label: string; required?: boolean; placeholder?: string }
   | { type: "textarea"; name: string; label: string; required?: boolean; placeholder?: string }
-  | { type: "number"; name: string; label: string; required?: boolean; min?: number; max?: number; help?: string }
+  | { type: "number"; name: string; label: string; required?: boolean; min?: number; max?: number; step?: number; help?: string }
   | { type: "select"; name: string; label: string; required?: boolean; options: { value: string; label: string }[] };
 
 export interface ActionDef<Row> {

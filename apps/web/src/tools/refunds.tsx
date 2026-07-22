@@ -42,7 +42,7 @@ export const refundsTool: ToolDefinition<Transaction> = {
       confirm: (t) => `Refund transaction ${t.id} for ${t.customerName}. Refundable up to ${money(remaining(t), t.currency)}.`,
       initialValues: (t) => ({ amount: (remaining(t) / 100).toFixed(2) }),
       fields: [
-        { type: "number", name: "amount", label: "Amount", required: true, min: 0, help: "In dollars" },
+        { type: "number", name: "amount", label: "Amount", required: true, min: 0, step: 0.01, help: "In dollars" },
         {
           type: "select",
           name: "reason",
