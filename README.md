@@ -78,8 +78,3 @@ npm run build
 
 These run in CI on every push/PR via GitHub Actions.
 
-## Known limitations (prototype)
-
-Mock auth (dev role selector, not real SSO), mock data, SQLite rather than production Postgres, and
-no real deployment/monitoring. These are intentional and are analyzed as production gaps in
-[`EVALUATION.md`](./EVALUATION.md).
