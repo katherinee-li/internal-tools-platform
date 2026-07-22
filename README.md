@@ -1,20 +1,27 @@
 # Internal Tools Platform (Retool build-vs-buy prototype)
 
-A lightweight, reusable internal-tools platform that demonstrates whether an in-house platform (built with Devin) can reproduce the **reusable capabilities** behind a company's Retool usage — not just three one-off pages.
+A reusable internal-tools platform, built with Devin, that demonstrates whether an in-house
+platform can reproduce the **reusable capabilities** behind a company's Retool usage — not just a
+few one-off pages.
 
-Three internal apps (KYC Review, Refunds, Feature Flags) plus a fourth tool (Support Tickets) and an Audit Log are all built on a single shared platform: one data layer, one RBAC model, one audit pipeline, and a declarative **tool-definition** engine. Adding a new tool is mostly configuration.
+Four tools — three core workflows plus a non-CRUD analytics dashboard — run on one shared platform
+(one data layer, one role-based permission model, one audit pipeline, reusable UI), so that adding
+the next tool is mostly configuration.
 
-> This is an evaluation prototype. It optimizes for reusable architecture, maintainability, and clear evidence — **not** visual polish or production hardening. See [`BUILD_VS_BUY.md`](./BUILD_VS_BUY.md) for the recommendation and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the process log.
+> This is an evaluation prototype: it optimizes for reusable architecture and clear evidence, **not**
+> production hardening. See [`EVALUATION.md`](./EVALUATION.md) for the scored evaluation and the
+> build-vs-buy recommendation, and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the
+> build log.
 
-## What's inside
+## What it does
 
-| Workflow | Capabilities |
+| Tool | Capabilities |
 | --- | --- |
-| **KYC Review Queue** | Search/filter by name, status, risk; review actions (approve / reject / escalate); mandatory reviewer note; audit logging |
-| **Refund Dashboard** | Transaction search; issue refund with validation (settled-only, ≤ refundable, positive); refund reasons; confirmation flow; audit logging |
-| **Feature Flag Admin** | View/modify flags per environment; enable + rollout %; environment selector; **production safeguard** (Admin-only + explicit confirm); role restrictions; audit logging |
-| **Support Tickets** (4th tool) | Added as a marginal-cost experiment to measure how cheap the *next* tool is |
-| **Audit Log** | Read-only view of every mutating action across all tools — including denied and failed attempts |
+| **KYC Review** | Search/filter by name, status, risk; approve / reject / escalate with a mandatory reviewer note; audit logging |
+| **Refunds** | Transaction search; issue refund with validation (settled-only, ≤ refundable, no double refund); reason + confirmation; audit logging |
+| **Feature Flags** | View/modify flags per environment; enable + rollout %; **production safeguard** (Admin-only + explicit confirm); audit logging |
+| **Operations Analytics** | A non-CRUD dashboard — KPI cards and charts over aggregated queries — showing the platform generalizes past table/form CRUD |
+| **Audit Log** | Read-only view of every mutating action across all tools, including denied and failed attempts |
 
 ## Architecture
 
@@ -22,58 +29,59 @@ Full-stack TypeScript monorepo (npm workspaces):
 
 ```
 packages/shared     Contracts shared by server + web: domain types, RBAC policy, validation
-apps/server         Express + SQLite (better-sqlite3). Server-enforced RBAC, append-only audit
+apps/server         Express + SQLite. Server-enforced RBAC, append-only audit
 apps/web            React + Vite. Reusable platform primitives + tool-definition engine
 ```
 
-### Reusable platform primitives
+The core idea is a declarative **tool-definition engine**: a tool is an object
+(`{ columns, filters, actions, fetch, submit }`) and the engine renders the whole screen —
+search/filter, table, permission-gated actions, forms, confirmation, toasts, and loading/error/empty
+states. A parallel **dashboard engine** + chart primitive handles non-CRUD tools. RBAC and audit are
+single shared layers used by every tool. This is what makes each new tool cheap to add.
 
-- **Data layer** (`apps/web/src/platform/api.ts`) — one typed client; injects the (dev) role header, parses the API error envelope, throws typed errors.
-- **Auth + RBAC** (`packages/shared/src/rbac.ts`, `apps/server/src/auth.ts`) — a single role→permission matrix used on **both** sides: the client hides/disables actions, the server *enforces* them and audits denials.
-- **Audit** (`apps/server/src/audit.ts`) — one append-only writer used by every mutating endpoint; success, denied, and error outcomes are all recorded.
-- **UI kit** (`apps/web/src/platform/`) — `AppShell` + nav + dev role selector, `DataTable`, schema-driven `ActionForm`/`Modal`, `SearchFilterBar`, badges, toasts, loading/error/empty states.
-- **Tool-definition engine** (`toolDefinition.ts` + `ToolPage.tsx`) — renders a full CRUD-style screen (search/filter → table → permission-gated actions → form/confirm → toast/refetch) from a declarative object. **This is what makes the next tool cheap.**
+## Roles
 
-Each app is therefore a small declarative file. A full tool UI is ~50–90 lines of config (see `apps/web/src/tools/*.tsx`).
-
-## Roles (demonstration)
-
-A **development-only role selector** (top-right) switches between:
+A development-only role selector (top-right) switches between:
 
 | Role | Access |
 | --- | --- |
 | **Viewer** | Read-only across all tools |
-| **Operator** | KYC decisions, refunds, ticket updates, non-production flag changes |
-| **Admin** | Everything, including **production** feature-flag changes |
+| **Operator** | KYC decisions, refunds, non-production flag changes |
+| **Admin** | Everything, including production feature-flag changes |
 
-RBAC is enforced **server-side** — switching roles in the client cannot bypass it. The selector only changes the `x-role` header; the server is authoritative.
+RBAC is enforced **server-side** — switching roles in the client cannot bypass it.
 
 ## Setup & run
 
 Requirements: Node 20+.
 
 ```bash
-npm install          # install workspace deps (builds better-sqlite3)
-npm run seed         # create ./apps/server/data.db and load deterministic mock data
+npm install          # install workspace deps
+npm run seed         # create the local DB and load deterministic mock data
 npm run dev          # start API (:4000) + web (:5173) together
 ```
 
 Then open http://localhost:5173 and use the role selector (top-right) to try Viewer / Operator / Admin.
 
-> `npm run dev` writes `data.db` in the repo (gitignored). Re-run `npm run seed` any time to reset to a clean state.
+Run as a single container:
+
+```bash
+docker compose up --build     # then open http://localhost:4000
+```
 
 ## Quality gates
 
 ```bash
-npm run lint         # eslint (typescript-eslint, no-explicit-any, react-hooks)
-npm run typecheck    # tsc --noEmit across all workspaces
-npm test             # vitest + supertest — RBAC + validation + audit (incl. 6 adversarial scenarios)
-npm run build        # production web build
+npm run lint
+npm run typecheck
+npm test              # vitest + supertest — RBAC, validation, audit (9 tests)
+npm run build
 ```
 
-The test suite (`apps/server/src/platform.test.ts`) covers the negative paths explicitly:
-Viewer→refund (denied), Operator→production flag (denied), refund > refundable, double refund, KYC decision with no note, and that **failed/denied actions never produce a `success` audit event**.
+These run in CI on every push/PR via GitHub Actions.
 
 ## Known limitations (prototype)
 
-Mock auth (dev role selector, not real SSO), mock data (no real Stripe/KYC vendors), SQLite (not production Postgres), no real deployment/monitoring/CI. These are intentional and are analyzed as production gaps in [`BUILD_VS_BUY.md`](./BUILD_VS_BUY.md).
+Mock auth (dev role selector, not real SSO), mock data, SQLite rather than production Postgres, and
+no real deployment/monitoring. These are intentional and are analyzed as production gaps in
+[`EVALUATION.md`](./EVALUATION.md).

@@ -1,0 +1,30 @@
+{
+  "name": "internal-tools-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Reusable internal-tools platform prototype (Retool build-vs-buy evaluation)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "seed": "npm run seed -w @platform/server",
+    "dev": "concurrently -n server,web -c blue,magenta \"npm run dev -w @platform/server\" \"npm run dev -w @platform/web\"",
+    "dev:server": "npm run dev -w @platform/server",
+    "dev:web": "npm run dev -w @platform/web",
+    "build": "npm run build -w @platform/web",
+    "start": "SERVE_WEB=1 npm run start -w @platform/server",
+    "typecheck": "npm run typecheck -w @platform/shared && npm run typecheck -w @platform/server && npm run typecheck -w @platform/web",
+    "lint": "eslint .",
+    "test": "npm run test -w @platform/server"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^15.15.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.65.0"
+  }
+}
