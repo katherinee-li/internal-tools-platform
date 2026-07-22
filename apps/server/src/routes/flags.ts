@@ -63,7 +63,9 @@ flagsRouter.patch("/:environment/:key", (req, res) => {
     return;
   }
 
-  const nextPct = rolloutPercentage ?? flag.rolloutPercentage;
+  const nextEnabled = enabled === undefined ? !!flag.enabled : !!enabled;
+  // A disabled flag has no rollout: force it to 0 regardless of the submitted value.
+  const nextPct = nextEnabled ? (rolloutPercentage ?? flag.rolloutPercentage) : 0;
   const v = validateRolloutPercentage(Number(nextPct));
   if (!v.ok) {
     recordAudit(db, {
@@ -78,7 +80,6 @@ flagsRouter.patch("/:environment/:key", (req, res) => {
     return;
   }
 
-  const nextEnabled = enabled === undefined ? !!flag.enabled : !!enabled;
   const now = new Date().toISOString();
   db.prepare(
     "UPDATE feature_flags SET enabled = ?, rolloutPercentage = ?, updatedBy = ?, updatedAt = ? WHERE key = ? AND environment = ?",

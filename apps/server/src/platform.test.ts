@@ -68,6 +68,18 @@ describe("Adversarial: Operator attempts a production flag change", () => {
   });
 });
 
+describe("Disabling a flag forces rollout to 0", () => {
+  it("ignores a submitted rollout when the flag is turned off", async () => {
+    const res = await request(app)
+      .patch("/api/flags/development/dark_mode")
+      .set(as("operator"))
+      .send({ enabled: false, rolloutPercentage: 80 });
+    expect(res.status).toBe(200);
+    expect(res.body.enabled).toBe(false);
+    expect(res.body.rolloutPercentage).toBe(0);
+  });
+});
+
 describe("Adversarial: Refund exceeds the remaining refundable amount", () => {
   it("is rejected (400) with a validation error and no success audit", async () => {
     // txn_2002 amount 4500; already refunded 0. Ask for 5000.

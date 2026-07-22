@@ -96,6 +96,8 @@ select.input { min-width: 150px; }
 .field .req { color: var(--danger); margin-left: 3px; font-style: normal; }
 .field .help { font-weight: 400; color: var(--muted); }
 .form-error { color: var(--red-fg); background: var(--red-bg); padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+.ack-check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 500; }
+.ack-check input { margin-top: 2px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 
 /* Toast */

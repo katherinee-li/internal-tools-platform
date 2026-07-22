@@ -141,6 +141,7 @@ export function ActionForm({
   fields,
   initialValues,
   confirmMessage,
+  ackLabel,
   submitLabel,
   submitting,
   errorMessage,
@@ -150,6 +151,7 @@ export function ActionForm({
   fields: FormFieldDef[];
   initialValues?: Record<string, string>;
   confirmMessage?: string;
+  ackLabel?: string;
   submitLabel: string;
   submitting: boolean;
   errorMessage?: string;
@@ -159,6 +161,7 @@ export function ActionForm({
   const initial: Record<string, string> = {};
   for (const f of fields) initial[f.name] = initialValues?.[f.name] ?? "";
   const [values, setValues] = useState<Record<string, string>>(initial);
+  const [acked, setAcked] = useState(false);
   const [localError, setLocalError] = useState<string | undefined>();
 
   const set = (name: string, value: string) => setValues((v) => ({ ...v, [name]: value }));
@@ -170,6 +173,10 @@ export function ActionForm({
         setLocalError(`${f.label} is required.`);
         return;
       }
+    }
+    if (ackLabel && !acked) {
+      setLocalError("Please confirm the checkbox to proceed.");
+      return;
     }
     setLocalError(undefined);
     onSubmit(values);
@@ -209,12 +216,18 @@ export function ActionForm({
           {f.type === "number" && "help" in f && f.help && <small className="help">{f.help}</small>}
         </label>
       ))}
+      {ackLabel && (
+        <label className="ack-check">
+          <input type="checkbox" checked={acked} onChange={(e) => setAcked(e.target.checked)} />
+          <span>{ackLabel}</span>
+        </label>
+      )}
       {(localError || errorMessage) && <div className="form-error" role="alert">{localError ?? errorMessage}</div>}
       <div className="modal-actions">
         <button type="button" className="btn" onClick={onCancel} disabled={submitting}>
           Cancel
         </button>
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
+        <button type="submit" className="btn btn-primary" disabled={submitting || (!!ackLabel && !acked)}>
           {submitting ? "Working…" : submitLabel}
         </button>
       </div>

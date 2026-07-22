@@ -53,12 +53,19 @@ export const flagsTool: ToolDefinition<FeatureFlag> = {
     {
       key: "edit",
       label: "Edit",
+      submitLabel: "Confirm",
       variant: "primary",
       // Production writes require the dedicated production permission (Admin).
       permission: (flag) => (flag.environment === "production" ? "flag.write.production" : "flag.write"),
       confirm: (flag) =>
         flag.environment === "production"
           ? `You are editing a PRODUCTION flag ("${flag.key}"). This affects live traffic.`
+          : undefined,
+      // Production changes require an explicit, mandatory acknowledgement — a
+      // distinct extra step other environments do not have.
+      requireAck: (flag) =>
+        flag.environment === "production"
+          ? "I understand this changes a PRODUCTION flag affecting live traffic."
           : undefined,
       initialValues: (flag) => ({
         enabled: String(flag.enabled),
@@ -79,9 +86,11 @@ export const flagsTool: ToolDefinition<FeatureFlag> = {
       ],
       successMessage: "Feature flag updated.",
       onSubmit: async (api, flag, values) => {
+        const enabled = values.enabled === "true";
+        // A disabled flag has no rollout — force it to 0.
         await api.patch(`/flags/${flag.environment}/${flag.key}`, {
-          enabled: values.enabled === "true",
-          rolloutPercentage: Number(values.rolloutPercentage),
+          enabled,
+          rolloutPercentage: enabled ? Number(values.rolloutPercentage) : 0,
         });
       },
     },

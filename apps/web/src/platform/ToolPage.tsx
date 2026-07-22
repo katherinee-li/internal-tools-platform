@@ -92,6 +92,7 @@ export function ToolPage<Row>({ def }: { def: ToolDefinition<Row> }) {
   }, [def.rowActions, can, role]);
 
   const activeConfirm = active?.action.confirm?.(active.row, {});
+  const activeAck = active ? active.action.requireAck?.(active.row) : undefined;
 
   return (
     <div className="tool-page">
@@ -123,7 +124,8 @@ export function ToolPage<Row>({ def }: { def: ToolDefinition<Row> }) {
             fields={active.action.fields ?? []}
             initialValues={active.action.initialValues?.(active.row)}
             confirmMessage={activeConfirm}
-            submitLabel={active.action.label}
+            ackLabel={activeAck}
+            submitLabel={active.action.submitLabel ?? active.action.label}
             submitting={submitting}
             errorMessage={formError}
             onSubmit={runAction}

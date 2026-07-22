@@ -44,6 +44,12 @@ export interface ActionDef<Row> {
   initialValues?: (row: Row) => Record<string, string>;
   // Extra confirmation copy; presence forces a confirm step.
   confirm?: (row: Row, values: Record<string, string>) => string | undefined;
+  // When it returns a string, the form shows a mandatory acknowledgement
+  // checkbox (labelled with that string) and submit stays disabled until it is
+  // checked — an explicit confirmation step for consequential actions.
+  requireAck?: (row: Row) => string | undefined;
+  // Label for the submit button (defaults to `label`, e.g. "Confirm" vs "Edit").
+  submitLabel?: string;
   // The only workflow-specific write logic.
   onSubmit: (api: ApiClient, row: Row, values: Record<string, string>) => Promise<void>;
   successMessage?: string;
