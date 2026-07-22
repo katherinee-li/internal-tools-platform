@@ -35,30 +35,37 @@ The honest signal is "one new primitive, then free again" — more believable th
 
 ### The money model
 
-**Assumptions.** Fully-loaded senior fintech engineer ≈ **$190K–$250K/yr**. Retool ≈ **$250K/yr**.
-Production-hardening the current tools ≈ **7–14 engineer-weeks**. Migration ≈ **4–8 engineer-weeks**.
-Ongoing maintenance ≈ **0.25–0.5 FTE/yr**.
+**Assumptions.** Every dollar below is derived from **hours × one rate** so the figures stay
+internally consistent. Fully-loaded senior fintech engineer ≈ **$150/hr** (~$300K/yr loaded over
+~2,000 productive hours). Retool ≈ **$250K/yr**.
 
-> **Effort ≠ calendar.** The build is 7–14 engineer-weeks of *construction*, but
-> calendar-to-production stays **~3–6 months** because security review, vendor integration, and
-> pen-testing are gated by elapsed time and approvals, not typing speed.
+> **Effort ≠ calendar.** With Devin writing the code, the *engineering effort* to productionize is
+> small; the *calendar* is not. Security review and a pen-test for KYC + refunds are gated by
+> elapsed time and approvals, not typing speed — so active effort can be ~1–2.5 weeks while
+> calendar-to-live is still **~4–8 weeks**.
 
-| Cost line | In-house | Notes |
-| --- | --- | --- |
-| One-time: production hardening (human) | **$30K–$80K** | build + review/pen-test/integration |
-| One-time: Retool migration | **$15K–$40K** | rebuild + data/user move + parallel run |
-| One-time: Devin compute | **$3K–$10K** | immaterial |
-| Recurring: maintenance (human) | **$48K–$125K/yr** | 0.25–0.5 FTE |
-| Recurring: infra + third-party (hosting, DB, backups, IdP, pen-test) | **$25K–$70K/yr** | [estimated] |
-| Recurring: hybrid dual-running | **$10K–$30K/yr** | two auth systems + two places to debug, while the 3 existing tools stay on Retool |
-| Recurring: Devin compute | **$1K–$4K/yr** | a rounding error |
+| Cost line | Hours | In-house $ | Notes |
+| --- | --- | --- | --- |
+| One-time: production hardening (human) | **40–100 hrs** | **$6K–$15K** | real auth/SSO, deploy, monitoring, tests, integrations, review — *not* rebuilding the platform (Devin already did that) |
+| One-time: Retool migration | 30–70 hrs | **$5K–$10K** | rebuild config + data/user move + parallel run |
+| One-time: Devin compute | — | **~$16** | the whole prototype; immaterial |
+| Recurring: maintenance (human) | **40–100 hrs/yr** | **$6K–$15K/yr** | ~0.02–0.05 FTE — a monthly check plus occasional fixes; **trends down** as Devin absorbs routine changes |
+| Recurring: infra + third-party (hosting, DB, backups, IdP, pen-test) | — | **$25K–$70K/yr** | [estimated] — mostly vendor spend, not engineering |
+| Recurring: Devin compute | — | **~$0.2K–0.5K/yr** | e.g. 200 runs × ~$2; less than three engineer-hours |
 
-**Break-even.** In-house is a mostly-fixed annual cost with near-zero marginal cost per new tool;
-Retool scales with seats/usage/tools. Building becomes compelling on a credible path to **~10–20+
-tools** or at the next Retool renewal. At **3 static tools**, buying wins on risk-adjusted total
-cost and opportunity cost. Devin collapses *implementation* cost toward zero, but the decision is
-dominated by human time, ownership, opportunity cost, and calendar — none of which Devin's ~$16
-compute changes.
+**Why maintenance declines.** Routine work — bug fixes, dependency bumps, connector updates, small
+feature requests — is exactly what Devin accelerates, so per-change cost keeps falling as the
+platform matures. What does *not* go to zero is the ownership floor: someone must stay accountable
+for incidents and security on tools that touch KYC, refunds, and production flags. That floor is
+human accountability, not engineering hours.
+
+**Break-even.** In-house is a mostly-fixed, modest annual cost with **near-zero and falling**
+marginal cost per new tool; Retool scales with seats/usage/tools. The reconciled numbers make the
+*engineering* case for building cheaper than a traditional estimate would — build effort is ~1–2.5
+weeks and maintenance is a fraction of an FTE. The decision therefore turns less on cost and more on
+**how many tools you'll have** and **how much platform ownership you want**: at **3 static tools**,
+buying still wins on risk and focus; on a credible path to **~10–20+ tools**, the near-zero marginal
+cost makes building compelling. Devin's compute never enters the decision.
 
 ---
 
