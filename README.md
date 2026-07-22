@@ -9,9 +9,7 @@ Four tools — three core workflows plus a non-CRUD analytics dashboard — run 
 the next tool is mostly configuration.
 
 > This is an evaluation prototype: it optimizes for reusable architecture and clear evidence, **not**
-> production hardening. See [`EVALUATION.md`](./EVALUATION.md) for the scored evaluation and the
-> build-vs-buy recommendation, and [`ENGINEERING_JOURNAL.md`](./ENGINEERING_JOURNAL.md) for the
-> build log.
+> production hardening.
 
 ## What it does
 
