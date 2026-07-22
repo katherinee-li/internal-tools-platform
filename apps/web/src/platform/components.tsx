@@ -210,6 +210,7 @@ export function ActionForm({
               placeholder={"placeholder" in f ? f.placeholder : ""}
               min={f.type === "number" ? f.min : undefined}
               max={f.type === "number" ? f.max : undefined}
+              step={f.type === "number" ? f.step ?? "any" : undefined}
               onChange={(e) => set(f.name, e.target.value)}
             />
           )}
